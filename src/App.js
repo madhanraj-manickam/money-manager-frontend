@@ -3,7 +3,7 @@ import axios from 'axios';
 
 
 const API = process.env.NODE_ENV === 'production' 
-  ? "https://your-backend-name.onrender.com/api/transactions" 
+  ? "https://money-manager-api-2sn4.onrender.com/api/transactions" 
   : "http://localhost:8080/api/transactions";
 
 export default function App() {
