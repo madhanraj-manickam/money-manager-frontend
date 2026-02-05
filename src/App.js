@@ -32,12 +32,30 @@ export default function App() {
     if (user) load(); 
   }, [user, load]); // load is now a stable dependency
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const userData = { email: loginData.email };
+const handleLogin = async (e) => {
+  e.preventDefault();
+  
+  // Choose the URL based on the toggle state
+  const endpoint = isSignUp ? "/signup" : "/login";
+  const authAPI = API.replace('/transactions', endpoint);
+
+  try {
+    const response = await axios.post(authAPI, {
+      username: loginData.email,
+      password: loginData.password
+    });
+
+    // If successful, log them in
+    const userData = { email: response.data.username };
     localStorage.setItem("walletUser", JSON.stringify(userData));
     setUser(userData);
-  };
+    alert(isSignUp ? "Account created successfully!" : "Welcome back!");
+  } catch (error) {
+    // Show specific error messages
+    const msg = error.response?.data || "Authentication failed";
+    alert(msg);
+  }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("walletUser");
