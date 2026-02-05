@@ -155,22 +155,40 @@ export default function App() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-lg shadow-2xl">
-            <h2 className="text-2xl font-black mb-6">{editingId ? 'Edit' : 'Add'}</h2>
-            <form onSubmit={save} className="space-y-4">
-              <input required type="number" placeholder="Amount" className="w-full p-5 bg-slate-50 rounded-2xl outline-none" 
-                value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} />
-              <input required type="text" placeholder="Description" className="w-full p-5 bg-slate-50 rounded-2xl outline-none" 
-                value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
-              <div className="flex gap-4 pt-4">
-                <button type="submit" className="flex-1 bg-indigo-600 text-white py-5 rounded-3xl font-black">Save</button>
-                <button type="button" onClick={() => {setModal(false); setEditingId(null);}} className="px-8 text-slate-400 font-bold">Cancel</button>
-              </div>
-            </form>
-          </div>
+  <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-[2.5rem] p-10 w-full max-w-lg shadow-2xl">
+      <h2 className="text-2xl font-black mb-6 text-slate-900">{editingId ? 'Edit' : 'Add'} Transaction</h2>
+      
+      {/* ADD THIS SECTION BELOW: Type Selector */}
+      <div className="flex bg-slate-100 p-1 rounded-2xl mb-6">
+        {['INCOME', 'EXPENSE'].map((m) => (
+          <button 
+            key={m} 
+            type="button"
+            onClick={() => setForm({ ...form, type: m })} 
+            className={`flex-1 py-3 text-xs font-black rounded-xl transition-all ${
+              form.type === m ? 'bg-white shadow-sm text-indigo-600' : 'text-slate-400'
+            }`}
+          >
+            {m}
+          </button>
+        ))}
+      </div>
+
+      <form onSubmit={save} className="space-y-4">
+        <input required type="number" placeholder="Amount" className="w-full p-5 bg-slate-50 rounded-2xl outline-none" 
+          value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} />
+        <input required type="text" placeholder="Description" className="w-full p-5 bg-slate-50 rounded-2xl outline-none" 
+          value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+        
+        <div className="flex gap-4 pt-4">
+          <button type="submit" className="flex-1 bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg">Save</button>
+          <button type="button" onClick={() => {setModal(false); setEditingId(null);}} className="px-8 text-slate-400 font-bold">Cancel</button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
 }
