@@ -80,23 +80,47 @@ export default function App() {
     exp: data.filter(t => t.type === 'EXPENSE').reduce((a, b) => a + b.amount, 0),
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
-        <div className="bg-white p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl">
-          <h2 className="text-3xl font-black mb-2 text-slate-900">Welcome Back</h2>
-          <p className="text-slate-400 mb-8 font-medium text-sm">Login to manage your wallet</p>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input required type="email" placeholder="Email Address" className="w-full p-5 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-indigo-500" 
-              onChange={e => setLoginData({...loginData, email: e.target.value})} />
-            <input required type="password" placeholder="Password" className="w-full p-5 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-indigo-500" 
-              onChange={e => setLoginData({...loginData, password: e.target.value})} />
-            <button type="submit" className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg hover:bg-indigo-700 transition-all">Login</button>
-          </form>
+  
+const [isSignUp, setIsSignUp] = useState(false);
+
+
+if (!user) {
+  return (
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
+      <div className="bg-white p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl">
+        <h2 className="text-3xl font-black mb-2 text-slate-900">
+          {isSignUp ? "Create Account" : "Welcome Back"}
+        </h2>
+        <p className="text-slate-400 mb-8 font-medium text-sm">
+          {isSignUp ? "Sign up to start managing your wallet" : "Login to manage your wallet"}
+        </p>
+        
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input required type="email" placeholder="Email Address" 
+            className="w-full p-5 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-indigo-500" 
+            onChange={e => setLoginData({...loginData, email: e.target.value})} />
+          
+          <input required type="password" placeholder="Password" 
+            className="w-full p-5 bg-slate-50 rounded-2xl outline-none border border-transparent focus:border-indigo-500" 
+            onChange={e => setLoginData({...loginData, password: e.target.value})} />
+          
+          <button type="submit" className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg hover:bg-indigo-700 transition-all">
+            {isSignUp ? "Sign Up" : "Login"}
+          </button>
+        </form>
+
+        <div className="mt-8 text-center">
+          <button 
+            onClick={() => setIsSignUp(!isSignUp)} 
+            className="text-indigo-600 font-bold text-sm hover:underline"
+          >
+            {isSignUp ? "Already have an account? Login" : "Don't have an account? Sign Up"}
+          </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-12 font-sans text-slate-900">
