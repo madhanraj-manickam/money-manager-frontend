@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Added useCallback here
 import axios from 'axios';
 
 const API = process.env.NODE_ENV === 'production' 
@@ -16,13 +16,21 @@ export default function App() {
     type: 'EXPENSE', amount: '', description: '', division: 'Personal', toDivision: 'Office', category: 'General'
   });
 
-  useEffect(() => { if (user) load(); }, [user]);
+  // Wrapped load in useCallback to satisfy Vercel's build rules
+  const load = useCallback(async () => {
+    if (!user?.email) return;
+    try {
+      const res = await axios.get(`${API}/user/${user.email}`);
+      setData(res.data);
+      setViewData(res.data);
+    } catch (err) {
+      console.error("Error loading data:", err);
+    }
+  }, [user?.email]);
 
-  const load = async () => {
-    const res = await axios.get(`${API}/user/${user.email}`);
-    setData(res.data);
-    setViewData(res.data);
-  };
+  useEffect(() => { 
+    if (user) load(); 
+  }, [user, load]); // load is now a stable dependency
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -39,15 +47,19 @@ export default function App() {
   const save = async (e) => {
     e.preventDefault();
     const payload = { ...form, amount: parseFloat(form.amount) };
-    if (editingId) {
-      await axios.put(`${API}/${editingId}`, payload);
-    } else {
-      await axios.post(`${API}/user/${user.email}`, payload);
+    try {
+      if (editingId) {
+        await axios.put(`${API}/${editingId}`, payload);
+      } else {
+        await axios.post(`${API}/user/${user.email}`, payload);
+      }
+      setEditingId(null);
+      setModal(false);
+      setForm({ type: 'EXPENSE', amount: '', description: '', division: 'Personal', toDivision: 'Office', category: 'General' });
+      load();
+    } catch (err) {
+      console.error("Error saving transaction:", err);
     }
-    setEditingId(null);
-    setModal(false);
-    setForm({ type: 'EXPENSE', amount: '', description: '', division: 'Personal', toDivision: 'Office', category: 'General' });
-    load();
   };
 
   const handleDelete = async (id) => {
